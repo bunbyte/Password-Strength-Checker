@@ -1,0 +1,99 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Strength Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .result {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .result h3 {
+            margin-top: 0;
+        }
+
+        .result p {
+            font-size: 1.2em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Password Strength Checker</h1>
+        <form method="POST" action="/">
+            <label for="password">Enter your password:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Check Strength</button>
+        </form>
+
+        {% if strength %}
+        <div class="result">
+            <h3>Password Strength:</h3>
+            <p>{{ strength }}</p>
+            <h3>Hashed Password:</h3>
+            <p>{{ password }}</p>
+            {% if stronger_password %}
+                <h3>Suggested Stronger Password:</h3>
+                <p>{{ stronger_password }}</p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
+

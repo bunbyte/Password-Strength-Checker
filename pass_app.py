@@ -1,34 +1,34 @@
-from flask import Flask, request, jsonify, send_from_directory
-import re
+from flask import Flask, render_template, request
+import hashlib
+import random
+import string
 
 app = Flask(__name__)
 
+def generate_stronger_password():
+    password_length = random.randint(20, 30)
+    characters = string.ascii_letters + string.digits + string.punctuation
+    stronger_password = ''.join(random.choice(characters) for i in range(password_length))
+    return stronger_password
+
 def check_password_strength(password):
-    length_score = min(len(password) // 8, 3)
-    diversity_score = len(set(password))
-    has_uppercase = bool(re.search(r'[A-Z]', password))
-    has_lowercase = bool(re.search(r'[a-z]', password))
-    has_digit = bool(re.search(r'[0-9]', password))
-    has_special = bool(re.search(r'[!@#$%^&*(),.?":{}|<>]', password))
-    score = length_score + diversity_score + has_uppercase + has_lowercase + has_digit + has_special
-    if score < 5:
-        strength = "Weak"
-    elif score < 8:
-        strength = "Moderate"
-    else:
-        strength = "Strong"
-    return strength, score
+    if len(password) < 8:
+        return "Weak"
+    if len(password) < 12:
+        return "Moderate"
+    if any(char.isdigit() for char in password) and any(char.isupper() for char in password) and any(char in string.punctuation for char in password):
+        return "Strong"
+    return "Moderate"
 
-@app.route('/check_strength', methods=['POST'])
-def check_strength():
-    data = request.get_json()
-    password = data['password']
-    strength, score = check_password_strength(password)
-    return jsonify({'strength': strength, 'score': score})
-
-@app.route('/')
+@app.route("/", methods=["GET", "POST"])
 def index():
-    return send_from_directory('', 'index.html')
+    if request.method == "POST":
+        password = request.form["password"]
+        strength = check_password_strength(password)
+        hashed_password = hashlib.sha256(password.encode()).hexdigest()
+        stronger_password = generate_stronger_password()
+        return render_template("index.html", strength=strength, password=hashed_password, stronger_password=stronger_password)
+    return render_template("index.html")
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    app.run(debug=False, port=5001)
